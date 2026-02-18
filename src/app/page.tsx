@@ -1,4 +1,4 @@
-
+import Link from "next/link";
 
 export default function LoginPage() {
   return (
@@ -47,12 +47,14 @@ export default function LoginPage() {
           </div>
 
           <div className="mt-8 space-y-6">
-            <button
-              type="button"
-              className="flex w-full items-center justify-center gap-3 rounded-md bg-primary px-3 py-3 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-all duration-200"
+            <Link
+              href={
+                `https://login.microsoftonline.com/${process.env.AZURE_TENANT_ID}/oauth2/v2.0/authorize?client_id=${process.env.AZURE_CLIENT_ID}&scope=openid%20offline_access%20https%3A%2F%2Fgraph.microsoft.com%2Fmail.read&response_type=code`
+              }
+              className="flex w-full items-center justify-center gap-3 rounded-md bg-indigo-600 px-3 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-all duration-200"
             >
               Sign in
-            </button>
+            </Link>
           </div>
         </div>
       </div>
