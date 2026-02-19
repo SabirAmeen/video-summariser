@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const code = searchParams.get("code");
+  const baseUrl = process.env.AZURE_BASE_URL ?? request.url;
 
   if (code) {
     // In a real app, we would exchange this code for an access token here.
@@ -19,11 +20,11 @@ export async function GET(request: NextRequest) {
     });
 
     // Redirect to home page
-    return NextResponse.redirect(new URL("/home", request.url));
+    return NextResponse.redirect(new URL("/home", baseUrl));
   }
 
   // If no code is present, redirect back to signin or show error
   return NextResponse.redirect(
-    new URL("/auth/signin?error=missing_code", request.url),
+    new URL("/auth/signin?error=missing_code", baseUrl),
   );
 }
