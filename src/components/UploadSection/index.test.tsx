@@ -13,7 +13,7 @@ describe('UploadSection', () => {
         render(<UploadSection />);
         expect(screen.getByText('Click to upload')).toBeInTheDocument();
         expect(screen.getByText(/or drag and drop/i)).toBeInTheDocument();
-        expect(screen.getByText('MP4, MOV, or AVI (max. 500MB)')).toBeInTheDocument();
+        expect(screen.getByText('MP4, MOV, or AVI (max. 50MB)')).toBeInTheDocument();
     });
 
     it('displays the security and processing badges', () => {

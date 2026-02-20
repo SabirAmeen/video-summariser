@@ -49,7 +49,7 @@ export default function LoginPage() {
           <div className="mt-8 space-y-6">
             <Link
               href={
-                `https://login.microsoftonline.com/${process.env.AZURE_TENANT_ID}/oauth2/v2.0/authorize?client_id=${process.env.AZURE_CLIENT_ID}&scope=openid%20offline_access%20https%3A%2F%2Fgraph.microsoft.com%2Fmail.read&response_type=code`
+                `https://login.microsoftonline.com/${process.env.AZURE_TENANT_ID_CREDS}/oauth2/v2.0/authorize?client_id=${process.env.AZURE_CLIENT_ID_CREDS}&scope=openid%20offline_access%20https%3A%2F%2Fgraph.microsoft.com%2Fmail.read&response_type=code`
               }
               className="flex w-full items-center justify-center gap-3 rounded-md bg-indigo-600 px-3 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-all duration-200"
             >

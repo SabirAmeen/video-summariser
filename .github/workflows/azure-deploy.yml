@@ -30,8 +30,8 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_CLIENT_ID_CREDS: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_TENANT_ID_CREDS: ${{ secrets.AZURE_TENANT_ID }}
           AZURE_BASE_URL: ${{ secrets.AZURE_BASE_URL }}
 
       - name: Prepare standalone build
