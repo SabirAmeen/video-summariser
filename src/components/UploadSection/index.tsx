@@ -33,6 +33,7 @@ export function UploadSection({
       }
       const responseObj = await response.json();
       setVideoId(responseObj.blobName);
+      console.log(responseObj.blobName);
       setUploadStatus("Upload successful!");
     } catch (error) {
       setUploadStatus(
