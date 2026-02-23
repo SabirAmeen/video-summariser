@@ -5,46 +5,49 @@ import { useEffect, useRef } from "react";
 export function TranscriptSection({ videoId }: { videoId: string | null }) {
   const signalConnection = useRef<signalR.HubConnection | null>(null);
   useEffect(() => {
-    const connection = new signalR.HubConnectionBuilder()
-      // Point to your Function App's base API route (e.g., http://localhost:7071/api)
-      // The SDK automatically appends /negotiate to this URL.
-      .withUrl(
-        process.env.AZURE_SIGNAL_NEGOTIATE_URL ?? "",
-        videoId
-          ? {
-              headers: {
-                // This header name must match the one in your function.json
-                // e.g., {headers.x-ms-client-principal-id}
-                "x-ms-client-principal-id": videoId,
-              },
-            }
-          : {},
-      )
-      .withAutomaticReconnect() // Optional: auto-reconnect on drop
-      .configureLogging(signalR.LogLevel.Information)
-      .build();
-    signalConnection.current = connection;
+    let connection: signalR.HubConnection | null = null;
+    if (videoId) {
+      connection = new signalR.HubConnectionBuilder()
+        // Point to your Function App's base API route (e.g., http://localhost:7071/api)
+        // The SDK automatically appends /negotiate to this URL.
+        .withUrl(
+          process.env.NEXT_PUBLIC_AZURE_SIGNAL_NEGOTIATE_URL ?? "",
+          videoId
+            ? {
+                headers: {
+                  // This header name must match the one in your function.json
+                  // e.g., {headers.x-ms-client-principal-id}
+                  "x-ms-client-principal-id": videoId,
+                },
+              }
+            : {},
+        )
+        .withAutomaticReconnect() // Optional: auto-reconnect on drop
+        .configureLogging(signalR.LogLevel.Information)
+        .build();
+      signalConnection.current = connection;
+    }
 
     async function start() {
       try {
-        await connection.start();
+        await connection?.start();
         console.log("SignalR Connected.");
       } catch (err) {
         console.error("SignalR Connection Error: ", err);
         setTimeout(start, 5000); // Retry on failure
       }
     }
-    start();
+    if (connection) start();
     return () => {
       async function disconnect() {
         try {
-          await connection.stop();
+          await connection?.stop();
           console.log("SignalR Connection closed.");
         } catch (err) {
           console.error("Error while closing connection: ", err);
         }
       }
-      disconnect();
+      if (connection) disconnect();
     };
   }, [videoId]);
 

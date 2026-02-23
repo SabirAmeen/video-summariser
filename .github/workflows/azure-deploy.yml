@@ -33,7 +33,7 @@ jobs:
           AZURE_CLIENT_ID_CREDS: ${{ secrets.AZURE_CLIENT_ID }}
           AZURE_TENANT_ID_CREDS: ${{ secrets.AZURE_TENANT_ID }}
           AZURE_BASE_URL: ${{ secrets.AZURE_BASE_URL }}
-          AZURE_SIGNAL_NEGOTIATE_URL: ${{ secrets.AZURE_SIGNAL_NEGOTIATE_URL }}
+          NEXT_PUBLIC_AZURE_SIGNAL_NEGOTIATE_URL: ${{ secrets.AZURE_SIGNAL_NEGOTIATE_URL }}
 
       - name: Prepare standalone build
         run: |
