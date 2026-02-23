@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { BlobServiceClient } from "@azure/storage-blob";
 import { DefaultAzureCredential } from "@azure/identity";
+import crypto from "crypto";
 
 export async function POST(request: Request) {
   try {
@@ -43,7 +44,8 @@ export async function POST(request: Request) {
     // Ensure container exists (create if not, purely optional depending on setup but safe to have)
     await containerClient.createIfNotExists();
 
-    const blobName = `${Date.now()}-${file.name || "uploaded-video.mp4"}`;
+    const uuid = crypto.randomUUID();
+    const blobName = `${uuid}`;
     const blockBlobClient = containerClient.getBlockBlobClient(blobName);
 
     console.log(

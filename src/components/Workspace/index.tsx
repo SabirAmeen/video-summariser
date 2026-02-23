@@ -1,0 +1,19 @@
+"use client";
+
+import { useState } from "react";
+import { UploadSection } from "@/components/UploadSection";
+import { TranscriptSection } from "@/components/TranscriptSection";
+
+export function Workspace() {
+  const [videoId, setVideoId] = useState<string | null>(null);
+
+  return (
+    <div className="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+      {/* Upload Section */}
+      <UploadSection setVideoId={setVideoId} />
+
+      {/* Transcript Section */}
+      <TranscriptSection videoId={videoId} />
+    </div>
+  );
+}
