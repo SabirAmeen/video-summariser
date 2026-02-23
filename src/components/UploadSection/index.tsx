@@ -3,7 +3,11 @@
 import { useState } from "react";
 import { UploadCloud, CheckCircle, Loader2 } from "lucide-react";
 
-export function UploadSection() {
+export function UploadSection({
+    setVideoId,
+}: {
+    setVideoId: (id: string) => void;
+}) {
     const [isUploading, setIsUploading] = useState(false);
     const [uploadStatus, setUploadStatus] = useState<string | null>(null);
 
@@ -27,7 +31,8 @@ export function UploadSection() {
                 const errorData = await response.json();
                 throw new Error(errorData.error || "Upload failed");
             }
-
+            const responseObj = await response.json();
+            setVideoId(responseObj.data.blobName);
             setUploadStatus("Upload successful!");
         } catch (error) {
             setUploadStatus(

@@ -1,9 +1,9 @@
 
 import { FileVideo, LogOut } from "lucide-react";
-import { UploadSection } from "@/components/UploadSection";
-import { TranscriptSection } from "@/components/TranscriptSection";
+import { Workspace } from "@/components/Workspace";
 
 export default function HomePage() {
+  
   return (
     <div className="min-h-screen bg-zinc-950 text-foreground selection:bg-indigo-500/30">
       {/* Navigation */}
@@ -43,13 +43,7 @@ export default function HomePage() {
             </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
-            {/* Upload Section */}
-            <UploadSection />
-
-            {/* Transcript Section */}
-            <TranscriptSection />
-        </div>
+        <Workspace />
       </main>
     </div>
   );
