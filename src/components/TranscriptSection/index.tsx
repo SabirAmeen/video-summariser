@@ -1,8 +1,37 @@
-import { FileText } from "lucide-react";
+import { FileText, Loader2 } from "lucide-react";
 import * as signalR from "@microsoft/signalr";
 import { useEffect } from "react";
 
-export function TranscriptSection({ videoId }: { videoId: string | null }) {
+export function TranscriptSection({
+  videoId,
+  summaryLoading,
+  videoSummary,
+  setVideoSummary,
+}: {
+  videoId: string | null;
+  summaryLoading: boolean;
+  videoSummary: string;
+  setVideoSummary: (summary: string) => void;
+}) {
+  const startSignalRConnection = async (connection: signalR.HubConnection) => {
+    try {
+      await connection?.start();
+      console.log("SignalR Connected.");
+    } catch (err) {
+      console.error("SignalR Connection Error: ", err);
+      setTimeout(() => startSignalRConnection(connection), 5000); // Retry on failure
+    }
+  };
+
+  const disconnectSignalR = async (connection: signalR.HubConnection) => {
+    try {
+      await connection?.stop();
+      console.log("SignalR Connection closed.");
+    } catch (err) {
+      console.error("Error while closing connection: ", err);
+    }
+  };
+
   useEffect(() => {
     let connection: signalR.HubConnection | null = null;
     if (videoId) {
@@ -25,35 +54,14 @@ export function TranscriptSection({ videoId }: { videoId: string | null }) {
         .configureLogging(signalR.LogLevel.Information)
         .build();
     }
-
-    async function start() {
-      try {
-        await connection?.start();
-        console.log("SignalR Connected.");
-      } catch (err) {
-        console.error("SignalR Connection Error: ", err);
-        setTimeout(start, 5000); // Retry on failure
-      }
-    }
     if (connection) {
       connection.on("newMessage", (data) => {
-        console.log(data, "newMessage");
+        setVideoSummary(data?.transcript ?? "");
       });
-      connection.on("newmessage", (data) => {
-        console.log(data, "newmessage");
-      });
-      start();
+      startSignalRConnection(connection);
     }
     return () => {
-      async function disconnect() {
-        try {
-          await connection?.stop();
-          console.log("SignalR Connection closed.");
-        } catch (err) {
-          console.error("Error while closing connection: ", err);
-        }
-      }
-      if (connection) disconnect();
+      if (connection) disconnectSignalR(connection);
     };
   }, [videoId]);
 
@@ -71,12 +79,19 @@ export function TranscriptSection({ videoId }: { videoId: string | null }) {
 
       <div className="h-[400px] w-full rounded-2xl border border-zinc-800 bg-zinc-900/30 p-1">
         <div className="h-full w-full rounded-xl bg-zinc-950/50 border border-white/5 p-6 overflow-y-auto custom-scrollbar">
-          <div className="flex flex-col items-center justify-center h-full text-center space-y-3 opacity-60">
-            <FileText className="w-12 h-12 text-zinc-700" />
-            <p className="text-zinc-500 text-sm">
-              Transcript will appear here after processing
-            </p>
-          </div>
+          {summaryLoading ? (
+            <div className="flex flex-col items-center justify-center h-full text-center space-y-3">
+              <Loader2 className="w-12 h-12 text-indigo-400 animate-spin" />
+              <p className="text-zinc-400 text-sm">Processing transcript...</p>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center h-full text-center space-y-3 opacity-60">
+              <FileText className="w-12 h-12 text-zinc-700" />
+              <p className="text-zinc-500 text-sm">
+                {videoSummary || "Transcript will appear here after processing"}
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
