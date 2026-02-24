@@ -14,6 +14,11 @@ export function Workspace() {
     setVideoSummary("");
   };
 
+  const onSummaryReceived = (summary: string) => {
+    setVideoSummary(summary);
+    setSummaryLoading(false);
+  };
+
   return (
     <div className="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
       {/* Upload Section */}
@@ -24,7 +29,7 @@ export function Workspace() {
         videoId={videoId}
         summaryLoading={summaryLoading}
         videoSummary={videoSummary}
-        setVideoSummary={setVideoSummary}
+        onSummaryReceived={onSummaryReceived}
       />
     </div>
   );

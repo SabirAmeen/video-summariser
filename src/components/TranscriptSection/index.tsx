@@ -6,12 +6,12 @@ export function TranscriptSection({
   videoId,
   summaryLoading,
   videoSummary,
-  setVideoSummary,
+  onSummaryReceived,
 }: {
   videoId: string | null;
   summaryLoading: boolean;
   videoSummary: string;
-  setVideoSummary: (summary: string) => void;
+  onSummaryReceived: (summary: string) => void;
 }) {
   const startSignalRConnection = async (connection: signalR.HubConnection) => {
     try {
@@ -56,7 +56,7 @@ export function TranscriptSection({
     }
     if (connection) {
       connection.on("newMessage", (data) => {
-        setVideoSummary(data?.transcript ?? "");
+        onSummaryReceived(data?.transcript ?? "");
       });
       startSignalRConnection(connection);
     }
