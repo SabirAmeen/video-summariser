@@ -2,6 +2,39 @@ import { FileText, Loader2 } from "lucide-react";
 import * as signalR from "@microsoft/signalr";
 import { useEffect } from "react";
 
+const formatTranscript = (summary: string) => {
+  const normalized = summary.replace(/\\n/g, "\n");
+  const [intro, ...restBlocks] = normalized
+    .split(/\n\s*\n/)
+    .map((block) => block.trim())
+    .filter(Boolean);
+
+  const timelineLines = restBlocks
+    .join("\n")
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  const timelineItems = timelineLines.map((line, index) => {
+    const match = line.match(/^[-*]\s*\*\*(.+?)\*\*:\s*(.+)$/);
+    if (!match) {
+      return {
+        key: `line-${index}`,
+        time: null,
+        text: line.replace(/^[-*]\s*/, ""),
+      };
+    }
+
+    return {
+      key: `time-${index}`,
+      time: match[1],
+      text: match[2],
+    };
+  });
+
+  return { intro, timelineItems };
+};
+
 export function TranscriptSection({
   videoId,
   summaryLoading,
@@ -83,6 +116,38 @@ export function TranscriptSection({
             <div className="flex flex-col items-center justify-center h-full text-center space-y-3">
               <Loader2 className="w-12 h-12 text-indigo-400 animate-spin" />
               <p className="text-zinc-400 text-sm">Processing transcript...</p>
+            </div>
+          ) : videoSummary ? (
+            <div className="space-y-4 text-sm text-zinc-200">
+              {(() => {
+                const { intro, timelineItems } = formatTranscript(videoSummary);
+                return (
+                  <>
+                    {intro ? (
+                      <p className="text-zinc-300 leading-relaxed">{intro}</p>
+                    ) : null}
+                    {timelineItems.length ? (
+                      <ul className="space-y-3">
+                        {timelineItems.map((item) => (
+                          <li
+                            key={item.key}
+                            className="flex flex-col gap-1 rounded-lg border border-white/5 bg-zinc-900/40 p-3"
+                          >
+                            {item.time ? (
+                              <span className="text-xs font-semibold uppercase tracking-wide text-indigo-300">
+                                {item.time}
+                              </span>
+                            ) : null}
+                            <span className="text-zinc-200 leading-relaxed">
+                              {item.text}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : null}
+                  </>
+                );
+              })()}
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center h-full text-center space-y-3 opacity-60">
