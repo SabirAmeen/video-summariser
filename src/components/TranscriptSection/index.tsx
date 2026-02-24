@@ -1,9 +1,8 @@
 import { FileText } from "lucide-react";
 import * as signalR from "@microsoft/signalr";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 export function TranscriptSection({ videoId }: { videoId: string | null }) {
-  const signalConnection = useRef<signalR.HubConnection | null>(null);
   useEffect(() => {
     let connection: signalR.HubConnection | null = null;
     if (videoId) {
@@ -25,7 +24,6 @@ export function TranscriptSection({ videoId }: { videoId: string | null }) {
         .withAutomaticReconnect() // Optional: auto-reconnect on drop
         .configureLogging(signalR.LogLevel.Information)
         .build();
-      signalConnection.current = connection;
     }
 
     async function start() {
@@ -37,7 +35,15 @@ export function TranscriptSection({ videoId }: { videoId: string | null }) {
         setTimeout(start, 5000); // Retry on failure
       }
     }
-    if (connection) start();
+    if (connection) {
+      connection.on("newMessage", (data) => {
+        console.log(data, "newMessage");
+      });
+      connection.on("newmessage", (data) => {
+        console.log(data, "newmessage");
+      });
+      start();
+    }
     return () => {
       async function disconnect() {
         try {
@@ -50,12 +56,6 @@ export function TranscriptSection({ videoId }: { videoId: string | null }) {
       if (connection) disconnect();
     };
   }, [videoId]);
-
-  useEffect(() => {
-    signalConnection.current?.on("newMessage", (data) => {
-      console.log(data);
-    });
-  }, [signalConnection.current]);
 
   return (
     <div className="space-y-4">
