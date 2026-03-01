@@ -8,21 +8,17 @@ export function TranscriptSection({ videoId }: { videoId: string | null }) {
     let connection: signalR.HubConnection | null = null;
     if (videoId) {
       connection = new signalR.HubConnectionBuilder()
-        // Point to your Function App's base API route (e.g., http://localhost:7071/api)
-        // The SDK automatically appends /negotiate to this URL.
         .withUrl(
-          process.env.NEXT_PUBLIC_AZURE_SIGNAL_NEGOTIATE_URL ?? "",
+          import.meta.env.VITE_AZURE_SIGNAL_NEGOTIATE_URL ?? "",
           videoId
             ? {
                 headers: {
-                  // This header name must match the one in your function.json
-                  // e.g., {headers.x-ms-client-principal-id}
                   "x-ms-client-principal-id": videoId,
                 },
               }
             : {},
         )
-        .withAutomaticReconnect() // Optional: auto-reconnect on drop
+        .withAutomaticReconnect()
         .configureLogging(signalR.LogLevel.Information)
         .build();
       signalConnection.current = connection;
@@ -34,7 +30,7 @@ export function TranscriptSection({ videoId }: { videoId: string | null }) {
         console.log("SignalR Connected.");
       } catch (err) {
         console.error("SignalR Connection Error: ", err);
-        setTimeout(start, 5000); // Retry on failure
+        setTimeout(start, 5000);
       }
     }
     if (connection) start();

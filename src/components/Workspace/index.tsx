@@ -1,8 +1,6 @@
-"use client";
-
 import { useState } from "react";
-import { UploadSection } from "@/components/UploadSection";
-import { TranscriptSection } from "@/components/TranscriptSection";
+import { UploadSection } from "~/components/UploadSection";
+import { TranscriptSection } from "~/components/TranscriptSection";
 
 export function Workspace() {
   const [videoId, setVideoId] = useState<string | null>(null);

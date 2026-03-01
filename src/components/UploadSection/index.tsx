@@ -1,7 +1,6 @@
-"use client";
-
 import { useState } from "react";
 import { UploadCloud, CheckCircle, Loader2 } from "lucide-react";
+import { uploadFile } from "~/server/upload";
 
 export function UploadSection({
   setVideoId,
@@ -22,16 +21,12 @@ export function UploadSection({
     formData.append("file", file);
 
     try {
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
+      const responseObj = await uploadFile({ data: formData });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Upload failed");
+      if ("error" in responseObj) {
+        throw new Error(responseObj.error);
       }
-      const responseObj = await response.json();
+
       setVideoId(responseObj.blobName);
       console.log(responseObj.blobName);
       setUploadStatus("Upload successful!");

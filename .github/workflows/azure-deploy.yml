@@ -30,34 +30,17 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          AZURE_CLIENT_ID_CREDS: ${{ secrets.AZURE_CLIENT_ID }}
-          AZURE_TENANT_ID_CREDS: ${{ secrets.AZURE_TENANT_ID }}
+          VITE_AZURE_CLIENT_ID_CREDS: ${{ secrets.AZURE_CLIENT_ID }}
+          VITE_AZURE_TENANT_ID_CREDS: ${{ secrets.AZURE_TENANT_ID }}
           AZURE_BASE_URL: ${{ secrets.AZURE_BASE_URL }}
           AZURE_STORAGE_ACCOUNT_NAME: ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}
           AZURE_STORAGE_CONTAINER_NAME: ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }}
-          NEXT_PUBLIC_AZURE_SIGNAL_NEGOTIATE_URL: ${{ secrets.AZURE_SIGNAL_NEGOTIATE_URL }}
-
-      - name: Prepare standalone build
-        run: |
-          # Copy public assets
-          mkdir -p .next/standalone/public
-          cp -r public/* .next/standalone/public/ || true
-
-          # Copy static assets (JS/CSS)
-          mkdir -p .next/standalone/.next/static
-          cp -r .next/static/* .next/standalone/.next/static/
-
-      - name: Configure startup script
-        run: |
-          cd .next/standalone
-          # Modify the copied package.json to use node server.js for startup
-          # This ensures we don't lose other metadata in package.json
-          npm pkg set scripts.start="node server.js"
+          VITE_AZURE_SIGNAL_NEGOTIATE_URL: ${{ secrets.AZURE_SIGNAL_NEGOTIATE_URL }}
 
       - name: Zip artifact
         run: |
-          cd .next/standalone
-          zip -r ../../release.zip .
+          cd .output
+          zip -r ../release.zip .
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -70,5 +53,5 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: video-summarizer
-          slot-name: "Production"
+          slot-name: "staging"
           package: release.zip
